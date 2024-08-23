@@ -1,0 +1,31 @@
+---
+- name: Deploy application on Kubernetes
+  hosts: all
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: Create deployment
+      k8s:
+        api_version: apps/v1
+        kind: Deployment
+        name: courzelo-course-attendance-prediction
+        namespace: courzelo
+        definition:
+          metadata:
+            labels:
+              app: my-app-course-attendance-prediction
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: my-app-course-attendance-prediction
+            template:
+              metadata:
+                labels:
+                  app: my-app-course-attendance-prediction
+              spec:
+                containers:
+                  - name: course-attendance-prediction-courzelo
+                    image: courzelo-course-attendance-prediction:v1.0.0-prod
+                nodeSelector:
+                     kubernetes.io/hostname: worker1
