@@ -80,8 +80,8 @@ pipeline{
           }
         }
 
-        stage('Docker Push'){
-          when {
+stage('Docker Push'){
+		when {
         expression {
           (params.CHANGE_ID != null)  && ((targetBranch == 'main') || (targetBranch == 'staging') || (targetBranch == 'develop'))
         }
@@ -91,10 +91,11 @@ pipeline{
             }
         }
 
+
         stage('Deploy to Prod') {
       when {
         expression {
-          (params.CHANGE_ID != null) && (targetBranch == 'develop')
+          (params.CHANGE_ID != null) && (targetBranch == 'main')
         }
       }
       steps {
