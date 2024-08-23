@@ -69,6 +69,9 @@ pipeline{
                   }
               }  
         }
+
+
+        
         stage('Docker Login'){
           steps{
             withCredentials([usernamePassword(credentialsId: 'Ala_dockerHub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
@@ -78,6 +81,11 @@ pipeline{
         }
 
         stage('Docker Push'){
+          when {
+        expression {
+          (params.CHANGE_ID != null)  && ((targetBranch == 'main') || (targetBranch == 'staging') || (targetBranch == 'develop'))
+        }
+    }
             steps{
                 sh 'docker push $DOCKERHUB_USERNAME/courzelo-course-attendance-prediction --all-tags'
             }
