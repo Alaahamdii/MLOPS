@@ -24,9 +24,12 @@ def fetch_data_from_mongodb():
 # Fetch data
 data = fetch_data_from_mongodb()
 
-# Preprocess data similar to your CSV approach
-selected_columns = ['Price', 'Category', 'Language', 'Required Score', 'Numbers of Attendee']
+# Preprocess data with the new attribute 'Rating'
+selected_columns = ['Price', 'Category', 'Language', 'Required Score', 'Rating', 'Numbers of Attendee']
 filtered_data = data[selected_columns]
+
+# Handle missing or invalid ratings by replacing them with the mean rating
+filtered_data['Rating'].fillna(filtered_data['Rating'].mean(), inplace=True)
 
 # One-hot encode categorical features
 encoded_data = pd.get_dummies(filtered_data.drop(columns=['Numbers of Attendee']), columns=['Category', 'Language'])
@@ -52,10 +55,10 @@ r2 = r2_score(y, predictions)
 # Add predictions to the original data
 filtered_data['Predicted Number of Attendees'] = predictions
 
-# Group the data by category
-grouped_data = filtered_data.groupby('Category')
+# Sort the data by predicted number of attendees in descending order
+sorted_data = filtered_data.sort_values(by='Predicted Number of Attendees', ascending=False)
 
-# Create an HTML report
+# Create an enhanced HTML report with better display
 html_template = """
 <!DOCTYPE html>
 <html>
@@ -73,8 +76,12 @@ html_template = """
             padding: 10px;
             text-align: left;
         }
-        h2 {
+        h2, h3 {
             margin-top: 20px;
+        }
+        .highlight {
+            background-color: #f9f9f9;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -83,37 +90,40 @@ html_template = """
     <h2>Model Performance</h2>
     <p>Mean Squared Error (MSE): {{ mse }}</p>
     <p>R² Score: {{ r2 }}</p>
-    <h2>Top Courses by Category</h2>
-    {% for category, courses in grouped_data.items() %}
-    <h3>Category: {{ category }}</h3>
+    <h2>Top 10 Courses by Predicted Attendance</h2>
     <table>
         <tr>
             <th>Price</th>
+            <th>Category</th>
             <th>Language</th>
             <th>Required Score</th>
+            <th>Rating</th>
             <th>Predicted Number of Attendees</th>
         </tr>
-        {% for index, row in courses.iterrows() %}
-        <tr>
+        {% for index, row in top_courses.iterrows() %}
+        <tr class="highlight" if loop.index % 2 == 0>
             <td>{{ row['Price'] }}</td>
+            <td>{{ row['Category'] }}</td>
             <td>{{ row['Language'] }}</td>
             <td>{{ row['Required Score'] }}</td>
+            <td>{{ row['Rating'] }}</td>
             <td>{{ row['Predicted Number of Attendees'] }}</td>
         </tr>
         {% endfor %}
     </table>
-    {% endfor %}
 </body>
 </html>
 """
 
+# Select the top 10 courses
+top_courses = sorted_data.head(10)
+
 # Render the HTML
-grouped_data_dict = {category: group for category, group in grouped_data}
 template = Template(html_template)
-html_content = template.render(mse=mse, r2=r2, grouped_data=grouped_data_dict)
+html_content = template.render(mse=mse, r2=r2, top_courses=top_courses)
 
 # Write the HTML to a file
-with open('course_attendance_report.html', 'w') as f:
+with open('enhanced_course_attendance_report.html', 'w') as f:
     f.write(html_content)
 
-print("Report generated: course_attendance_report.html")
+print("Enhanced report generated: enhanced_course_attendance_report.html")
