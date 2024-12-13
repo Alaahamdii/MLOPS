@@ -26,6 +26,6 @@
               spec:
                 containers:
                   - name: course-attendance-prediction-courzelo
-                    image: courzelo-course-attendance-prediction:v1.0.0-prod
+                    image: courzelo-course-attendance-prediction:v1.0.1-prod
                 nodeSelector:
                      kubernetes.io/hostname: worker1
