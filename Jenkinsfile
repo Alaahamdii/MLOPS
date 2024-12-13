@@ -9,7 +9,7 @@ pipeline{
 
     environment {
       DOCKERHUB_USERNAME = "hamdiiala"
-      PROD_TAG = "${DOCKERHUB_USERNAME}/courzelo-course-attendance-prediction:v1.0.0-prod"
+      PROD_TAG = "${DOCKERHUB_USERNAME}/courzelo-course-attendance-prediction:v1.0.1-prod"
 
      
   }
