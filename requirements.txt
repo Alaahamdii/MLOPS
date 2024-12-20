@@ -2,4 +2,4 @@ pandas
 scikit-learn 
 pymongo
 jinja2
-dotenv
+python-dotenv
