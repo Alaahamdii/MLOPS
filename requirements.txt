@@ -1,4 +1,5 @@
 pandas 
 scikit-learn 
 pymongo
-jinja2 
+jinja2
+dotenv
