@@ -26,4 +26,8 @@
                 containers:
                   - name: course-attendance-prediction-courzelo
                     image: courzelo-course-attendance-prediction:v1.0.1-prod
-              
+                    imagePullPolicy: Always
+                nodeSelector:
+                    kubernetes.io/hostname: worker1
+        context: "kubernetes-admin@kubernetes"
+        verify_ssl: false
