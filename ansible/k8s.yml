@@ -7,27 +7,49 @@
       k8s:
         api_version: apps/v1
         kind: Deployment
-        name: courzelo-course-attendance-prediction
+        name: deployment-course-attendance-prediction
         namespace: courzelo
         definition:
           metadata:
             labels:
-              app: my-app-course-attendance-prediction
+              app: course-attendance-prediction
           spec:
             replicas: 1
             selector:
               matchLabels:
-                app: my-app-course-attendance-prediction
+                app: course-attendance-prediction
             template:
               metadata:
                 labels:
-                  app: my-app-course-attendance-prediction
+                  app: course-attendance-prediction
               spec:
                 containers:
-                  - name: course-attendance-prediction-courzelo
+                  - name: course-attendance-prediction
                     image: courzelo-course-attendance-prediction:v1.0.1-prod
                     imagePullPolicy: Always
+                    ports:
+                      - containerPort: 8181
                 nodeSelector:
                     kubernetes.io/hostname: worker1
         context: "kubernetes-admin@kubernetes"
         verify_ssl: false
+- name: Create service
+      k8s:
+        api_version: v1
+        kind: Service
+        name: course-attendance-prediction
+        namespace: courzelo
+        definition:
+          metadata:
+            name: course-attendance-prediction
+            labels:
+              app: course-attendance-prediction
+          spec:
+            selector:
+              app: course-attendance-prediction
+            ports:
+              - protocol: TCP
+                port: 8999
+                targetPort: 8181
+                nodePort: 31416 
+            type: NodePort
