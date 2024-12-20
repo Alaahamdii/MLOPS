@@ -29,7 +29,7 @@ selected_columns = ['Price', 'Category', 'Language', 'Required Score', 'Rating',
 filtered_data = data[selected_columns]
 
 # Handle missing or invalid ratings by replacing them with the mean rating
-filtered_data['Rating'].fillna(filtered_data['Rating'].mean(), inplace=True)
+filtered_data['Rating'] = filtered_data['Rating'].fillna(filtered_data['Rating'].mean())
 
 # One-hot encode categorical features
 encoded_data = pd.get_dummies(filtered_data.drop(columns=['Numbers of Attendee']), columns=['Category', 'Language'])
@@ -53,7 +53,7 @@ mse = mean_squared_error(y, predictions)
 r2 = r2_score(y, predictions)
 
 # Add predictions to the original data
-filtered_data['Predicted Number of Attendees'] = predictions
+filtered_data.loc[:, 'Predicted Number of Attendees'] = predictions
 
 # Sort the data by predicted number of attendees in descending order
 sorted_data = filtered_data.sort_values(by='Predicted Number of Attendees', ascending=False)
