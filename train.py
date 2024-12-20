@@ -26,7 +26,7 @@ data = fetch_data_from_mongodb()
 
 # Preprocess data with the new attribute 'Rating'
 selected_columns = ['Price', 'Category', 'Language', 'Required Score', 'Rating', 'Numbers of Attendee']
-filtered_data = data[selected_columns]
+filtered_data = data[selected_columns].copy()
 
 # Handle missing or invalid ratings by replacing them with the mean rating
 filtered_data.loc[:, 'Rating'] = filtered_data['Rating'].fillna(filtered_data['Rating'].mean())
