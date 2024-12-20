@@ -31,9 +31,7 @@
                       - containerPort: 8181
                 nodeSelector:
                     kubernetes.io/hostname: worker1
-        context: "kubernetes-admin@kubernetes"
-        verify_ssl: false
-- name: Create service
+    - name: Create service
       k8s:
         api_version: v1
         kind: Service
